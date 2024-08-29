@@ -1,0 +1,3477 @@
+{
+	"info": {
+		"_postman_id": "d7625fcb-2bc2-459f-b75c-c48a1d5e09e5",
+		"name": "Azure/Cosmos APIs",
+		"description": "To use the Azure APIs you will need to create a service principle on your subscription. The following article takes you through how to do this via the Azure CLI - [Create Service Principle](https://blog.jongallant.com/2017/11/azure-rest-apis-postman/)\n\nThe details for how to access cosmosDb can be found on the Cosmos folder description\n\n##Authorisation\n\nAuthorisation for the Azure_API requests are handled via a collection level Pre-Request script. This will check to see if a valid token is already available, if not a auth request will be made to get an updated token.\n\nThe same applies for Cosmos but the Pre-Request script is held in that folder.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35979022"
+	},
+	"item": [
+		{
+			"name": "Azure_API",
+			"item": [
+				{
+					"name": "Authorization",
+					"item": [
+						{
+							"name": "Get AAD Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(pm.info.requestName, () => {",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.not.have.jsonBody('error');",
+											"});",
+											"pm.globals.set(\"bearerToken\", pm.response.json().access_token);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "grant_type",
+											"value": "client_credentials",
+											"type": "text"
+										},
+										{
+											"key": "client_id",
+											"value": "{{clientId}}",
+											"type": "text"
+										},
+										{
+											"key": "client_secret",
+											"value": "{{clientSecret}}",
+											"type": "text"
+										},
+										{
+											"key": "resource",
+											"value": "{{resource}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://login.microsoftonline.com/{{tenantId}}/oauth2/token",
+									"protocol": "https",
+									"host": [
+										"login",
+										"microsoftonline",
+										"com"
+									],
+									"path": [
+										"{{tenantId}}",
+										"oauth2",
+										"token"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "App_Services",
+					"item": [
+						{
+							"name": "Get App Service",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{bearerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourceGroups/:resourceGroup/providers/Microsoft.Web/sites/:appService?api-version=2016-08-01",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourceGroups",
+										":resourceGroup",
+										"providers",
+										"Microsoft.Web",
+										"sites",
+										":appService"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2016-08-01"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": ""
+										},
+										{
+											"key": "resourceGroup",
+											"value": ""
+										},
+										{
+											"key": "appService",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Stop App Service",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourceGroups/:resourceGroup/providers/Microsoft.Web/sites/:appService/stop?api-version=2016-08-01",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourceGroups",
+										":resourceGroup",
+										"providers",
+										"Microsoft.Web",
+										"sites",
+										":appService",
+										"stop"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2016-08-01"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										},
+										{
+											"key": "resourceGroup",
+											"value": ""
+										},
+										{
+											"key": "appService",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Start App Service",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourceGroups/:resourceGroup/providers/Microsoft.Web/sites/:appService/start?api-version=2016-08-01",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourceGroups",
+										":resourceGroup",
+										"providers",
+										"Microsoft.Web",
+										"sites",
+										":appService",
+										"start"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2016-08-01"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										},
+										{
+											"key": "resourceGroup",
+											"value": ""
+										},
+										{
+											"key": "appService",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Restart App Service",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourceGroups/:resourceGroup/providers/Microsoft.Web/sites/:appService/restart?api-version=2019-08-01",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourceGroups",
+										":resourceGroup",
+										"providers",
+										"Microsoft.Web",
+										"sites",
+										":appService",
+										"restart"
+									],
+									"query": [
+										{
+											"key": "softRestart",
+											"value": "{softRestart}",
+											"description": "boolean",
+											"disabled": true
+										},
+										{
+											"key": "synchronous",
+											"value": "{synchronous}",
+											"description": "boolean",
+											"disabled": true
+										},
+										{
+											"key": "api-version",
+											"value": "2019-08-01"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										},
+										{
+											"key": "resourceGroup",
+											"value": ""
+										},
+										{
+											"key": "appService",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List App Settings",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourceGroups/:resourceGroup/providers/Microsoft.Web/sites/:appService/config/appsettings/list?api-version=2019-08-01",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourceGroups",
+										":resourceGroup",
+										"providers",
+										"Microsoft.Web",
+										"sites",
+										":appService",
+										"config",
+										"appsettings",
+										"list"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2019-08-01"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										},
+										{
+											"key": "resourceGroup",
+											"value": ""
+										},
+										{
+											"key": "appService",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update App Settings",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"properties\": {\n        \"test2\": \"newProp\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourceGroups/:resourceGroup/providers/Microsoft.Web/sites/:appService/config/appsettings?api-version=2019-08-01",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourceGroups",
+										":resourceGroup",
+										"providers",
+										"Microsoft.Web",
+										"sites",
+										":appService",
+										"config",
+										"appsettings"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2019-08-01"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										},
+										{
+											"key": "resourceGroup",
+											"value": ""
+										},
+										{
+											"key": "appService",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Connection Strings",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourceGroups/:resourceGroup/providers/Microsoft.Web/sites/:appService/config/connectionstrings/list?api-version=2019-08-01",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourceGroups",
+										":resourceGroup",
+										"providers",
+										"Microsoft.Web",
+										"sites",
+										":appService",
+										"config",
+										"connectionstrings",
+										"list"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2019-08-01"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										},
+										{
+											"key": "resourceGroup",
+											"value": ""
+										},
+										{
+											"key": "appService",
+											"value": ""
+										}
+									]
+								},
+								"description": "Gets the connection strings of an app.\nDescription for Gets the connection strings of an app."
+							},
+							"response": []
+						},
+						{
+							"name": "List Container Logs",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourceGroups/:resourceGroup/providers/Microsoft.Web/sites/:appService/containerlogs?api-version=2019-08-01",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourceGroups",
+										":resourceGroup",
+										"providers",
+										"Microsoft.Web",
+										"sites",
+										":appService",
+										"containerlogs"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2019-08-01"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										},
+										{
+											"key": "resourceGroup",
+											"value": ""
+										},
+										{
+											"key": "appService",
+											"value": ""
+										}
+									]
+								},
+								"description": "Gets the connection strings of an app.\nDescription for Gets the connection strings of an app."
+							},
+							"response": []
+						},
+						{
+							"name": "List Key Vault Keys",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourceGroups/:resourceGroup/providers/Microsoft.Web/sites/:appService/config/web?api-version=2019-08-01",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourceGroups",
+										":resourceGroup",
+										"providers",
+										"Microsoft.Web",
+										"sites",
+										":appService",
+										"config",
+										"web"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2019-08-01"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										},
+										{
+											"key": "resourceGroup",
+											"value": ""
+										},
+										{
+											"key": "appService",
+											"value": ""
+										}
+									]
+								},
+								"description": "Gets the connection strings of an app.\nDescription for Gets the connection strings of an app."
+							},
+							"response": []
+						},
+						{
+							"name": "List Slots - App Service",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourceGroups/:resourceGroup/providers/Microsoft.Web/sites/:appService/slots?api-version=2019-08-01",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourceGroups",
+										":resourceGroup",
+										"providers",
+										"Microsoft.Web",
+										"sites",
+										":appService",
+										"slots"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2019-08-01"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										},
+										{
+											"key": "resourceGroup",
+											"value": ""
+										},
+										{
+											"key": "appService",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Processes - App Service",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourceGroups/:resourceGroup/providers/Microsoft.Web/sites/:appService/processes?api-version=2019-08-01",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourceGroups",
+										":resourceGroup",
+										"providers",
+										"Microsoft.Web",
+										"sites",
+										":appService",
+										"processes"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2019-08-01"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										},
+										{
+											"key": "resourceGroup",
+											"value": ""
+										},
+										{
+											"key": "appService",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Resource_Groups",
+					"item": [
+						{
+							"name": "Get Resource Groups",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var template = `\r",
+											"<script src=\"https://d3js.org/d3.v5.min.js\"></script>\r",
+											"<div id=\"table\"></div>\r",
+											"<style>\r",
+											"    thead {\r",
+											"      background-color: #F5F5F5;\r",
+											"      border\r",
+											"    } \r",
+											"    th, th:first-child, th:last-child, td, td:first-child, td:last-child {\r",
+											"        padding: 12px 15px;\r",
+											"    }\r",
+											"    th {\r",
+											"        text-transform: uppercase;\r",
+											"    }\r",
+											"    td {\r",
+											"        color: #676769;\r",
+											"    }\r",
+											"    tbody tr:nth-child(odd) {\r",
+											"        background-color: white;\r",
+											"        transition: 0.3s;\r",
+											"    }\r",
+											"    tbody tr:nth-child(even) {\r",
+											"        background-color: #F5F5F5;\r",
+											"        transition: 0.3s;\r",
+											"    }\r",
+											"    tbody tr:hover {\r",
+											"        filter: brightness(90%);\r",
+											"    }\r",
+											"    .api {\r",
+											"        cursor: pointer;\r",
+											"    }\r",
+											"    .api:active {\r",
+											"        color: #202128;\r",
+											"    }\r",
+											"</style>\r",
+											"<script>\r",
+											"    const results = {{{results}}};\r",
+											"    const headers = {{{headers}}};\r",
+											"    var table = d3.select(\"#table\").append(\"table\");\r",
+											"    var header = table.append(\"thead\").append(\"tr\");\r",
+											"    \r",
+											"    // creates the headers\r",
+											"    header\r",
+											"      .selectAll(\"th\")\r",
+											"        .data(headers)\r",
+											"        .enter()\r",
+											"      .append(\"th\")\r",
+											"        .text(function(d) {return d;});\r",
+											"    var tablebody = table.append(\"tbody\");\r",
+											"    rows = tablebody\r",
+											"      .selectAll(\"tr\")\r",
+											"        .data(results)\r",
+											"        .enter()\r",
+											"      .append(\"tr\");\r",
+											"      \r",
+											"    // each row has its own array, so here we enter it into the cells\r",
+											"    cells = rows.selectAll(\"td\")\r",
+											"        .data(function(d) {\r",
+											"            return d;\r",
+											"        })\r",
+											"        .enter()\r",
+											"      .append(\"td\")\r",
+											"        .text(function(d) {\r",
+											"            return d;\r",
+											"        })\r",
+											"      .filter(function(d) {return isEndpoint(d)})\r",
+											"        .attr('onclick', function(d) {\r",
+											"            return 'copy(\\\"' + d + '\\\")'\r",
+											"        })\r",
+											"        .attr('class', 'api');\r",
+											"        \r",
+											"    function copy(text) {\r",
+											"        const el = document.createElement('textarea');\r",
+											"        el.value = text;\r",
+											"        el.style = {display: 'none'};\r",
+											"        document.body.append(el);\r",
+											"        el.select();\r",
+											"        document.execCommand('copy');\r",
+											"        document.body.removeChild(el);\r",
+											"    }\r",
+											"    \r",
+											"    function isEndpoint(url) {\r",
+											"        const host = '{{host}}'\r",
+											"        return url.toString().indexOf(host) !== -1\r",
+											"    }\r",
+											"    \r",
+											"</script>`;\r",
+											"\r",
+											"// Host checks for nested API endpoints and makes them copyable-on-click\r",
+											"const host = pm.request.url.host.join(\".\");\r",
+											"const response = pm.response.json();\r",
+											"\r",
+											"/* DATA PARSING */\r",
+											"function parseData(response, host) {\r",
+											"    // Row data passed in as array of arrays (ex. [[name1, api1], [name2, api2], ...])\r",
+											"    const results = response.value.map(obj => Object.values(obj));\r",
+											"\r",
+											"    // Table Headers passed in as array of strings (ex. [\"Name\", \"Link\", ...])\r",
+											"    const headers = Array.from(\r",
+											"      response.value.reduce((keys, cur) => {\r",
+											"        for (const key of Object.keys(cur)) {\r",
+											"          keys.add(key);\r",
+											"        }\r",
+											"        return keys;\r",
+											"      }, new Set())\r",
+											"    );\r",
+											"    return [results, headers]\r",
+											"}\r",
+											"\r",
+											"/* FEED DATA INTO TEMPLATE */\r",
+											"pm.visualizer.set(template, {\r",
+											"  // Template will receive stringified JSON\r",
+											"  results: JSON.stringify(parseData(response)[0]),\r",
+											"  headers: JSON.stringify(parseData(response)[1]),\r",
+											"  host\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{bearerToken}}"
+									}
+								],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourcegroups?api-version=2017-05-10",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourcegroups"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2017-05-10"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Resource Group",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourceGroups/:resourceGroup?api-version=2017-05-10",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourceGroups",
+										":resourceGroup"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2017-05-10"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										},
+										{
+											"key": "resourceGroup",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Deployment Log",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{bearerToken}}"
+									}
+								],
+								"url": {
+									"raw": "https://management.azure.com/subscriptions/:subscriptionId/resourcegroups?api-version=2017-05-10",
+									"protocol": "https",
+									"host": [
+										"management",
+										"azure",
+										"com"
+									],
+									"path": [
+										"subscriptions",
+										":subscriptionId",
+										"resourcegroups"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "2017-05-10"
+										}
+									],
+									"variable": [
+										{
+											"key": "subscriptionId",
+											"value": "{{subscriptionId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "CosmosDB",
+			"item": [
+				{
+					"name": "Database",
+					"item": [
+						{
+							"name": "Create Database",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var template = `",
+											"<script src=\"https://d3js.org/d3.v5.min.js\"></script>",
+											"<div id=\"table\"></div>",
+											"<style>",
+											"    thead {",
+											"      background-color: #F5F5F5;",
+											"      border",
+											"    } ",
+											"    th, th:first-child, th:last-child, td, td:first-child, td:last-child {",
+											"        padding: 12px 15px;",
+											"    }",
+											"    th {",
+											"        text-transform: uppercase;",
+											"    }",
+											"    td {",
+											"        color: #676769;",
+											"    }",
+											"    tbody tr:nth-child(odd) {",
+											"        background-color: white;",
+											"        transition: 0.3s;",
+											"    }",
+											"    tbody tr:nth-child(even) {",
+											"        background-color: #F5F5F5;",
+											"        transition: 0.3s;",
+											"    }",
+											"    tbody tr:hover {",
+											"        filter: brightness(90%);",
+											"    }",
+											"    .api {",
+											"        cursor: pointer;",
+											"    }",
+											"    .api:active {",
+											"        color: #202128;",
+											"    }",
+											"</style>",
+											"<script>",
+											"    const results = {{{results}}};",
+											"    const headers = {{{headers}}};",
+											"    var table = d3.select(\"#table\").append(\"table\");",
+											"    var header = table.append(\"thead\").append(\"tr\");",
+											"    ",
+											"    // creates the headers",
+											"    header",
+											"      .selectAll(\"th\")",
+											"        .data(headers)",
+											"        .enter()",
+											"      .append(\"th\")",
+											"        .text(function(d) {return d;});",
+											"    var tablebody = table.append(\"tbody\");",
+											"    rows = tablebody",
+											"      .selectAll(\"tr\")",
+											"        .data(results)",
+											"        .enter()",
+											"      .append(\"tr\");",
+											"      ",
+											"    // each row has its own array, so here we enter it into the cells",
+											"    cells = rows.selectAll(\"td\")",
+											"        .data(function(d) {",
+											"            return d;",
+											"        })",
+											"        .enter()",
+											"      .append(\"td\")",
+											"        .text(function(d) {",
+											"            return d;",
+											"        })",
+											"      .filter(function(d) {return isEndpoint(d)})",
+											"        .attr('onclick', function(d) {",
+											"            return 'copy(\\\"' + d + '\\\")'",
+											"        })",
+											"        .attr('class', 'api');",
+											"        ",
+											"    function copy(text) {",
+											"        const el = document.createElement('textarea');",
+											"        el.value = text;",
+											"        el.style = {display: 'none'};",
+											"        document.body.append(el);",
+											"        el.select();",
+											"        document.execCommand('copy');",
+											"        document.body.removeChild(el);",
+											"    }",
+											"    ",
+											"    function isEndpoint(url) {",
+											"        const host = '{{host}}'",
+											"        return url.toString().indexOf(host) !== -1",
+											"    }",
+											"    ",
+											"</script>`;",
+											"",
+											"// Host checks for nested API endpoints and makes them copyable-on-click",
+											"const host = pm.request.url.host.join(\".\");",
+											"const response = pm.response.json();",
+											"",
+											"/* DATA PARSING */",
+											"function parseData(response, host) {",
+											"    // Row data passed in as array of arrays (ex. [[name1, api1], [name2, api2], ...])",
+											"    const results = response.Databases.map(obj => Object.values(obj));",
+											"",
+											"    // Table Headers passed in as array of strings (ex. [\"Name\", \"Link\", ...])",
+											"    const headers = Array.from(",
+											"      response.Databases.reduce((keys, cur) => {",
+											"        for (const key of Object.keys(cur)) {",
+											"          keys.add(key);",
+											"        }",
+											"        return keys;",
+											"      }, new Set())",
+											"    );",
+											"    return [results, headers]",
+											"}",
+											"",
+											"/* FEED DATA INTO TEMPLATE */",
+											"pm.visualizer.set(template, {",
+											"  // Template will receive stringified JSON",
+											"  results: JSON.stringify(parseData(response)[0]),",
+											"  headers: JSON.stringify(parseData(response)[1]),",
+											"  host",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"\"\n    // Enter extra data here\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Databases",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var template = `",
+											"<script src=\"https://d3js.org/d3.v5.min.js\"></script>",
+											"<div id=\"table\"></div>",
+											"<style>",
+											"    thead {",
+											"      background-color: #F5F5F5;",
+											"      border",
+											"    } ",
+											"    th, th:first-child, th:last-child, td, td:first-child, td:last-child {",
+											"        padding: 12px 15px;",
+											"    }",
+											"    th {",
+											"        text-transform: uppercase;",
+											"    }",
+											"    td {",
+											"        color: #676769;",
+											"    }",
+											"    tbody tr:nth-child(odd) {",
+											"        background-color: white;",
+											"        transition: 0.3s;",
+											"    }",
+											"    tbody tr:nth-child(even) {",
+											"        background-color: #F5F5F5;",
+											"        transition: 0.3s;",
+											"    }",
+											"    tbody tr:hover {",
+											"        filter: brightness(90%);",
+											"    }",
+											"    .api {",
+											"        cursor: pointer;",
+											"    }",
+											"    .api:active {",
+											"        color: #202128;",
+											"    }",
+											"</style>",
+											"<script>",
+											"    const results = {{{results}}};",
+											"    const headers = {{{headers}}};",
+											"    var table = d3.select(\"#table\").append(\"table\");",
+											"    var header = table.append(\"thead\").append(\"tr\");",
+											"    ",
+											"    // creates the headers",
+											"    header",
+											"      .selectAll(\"th\")",
+											"        .data(headers)",
+											"        .enter()",
+											"      .append(\"th\")",
+											"        .text(function(d) {return d;});",
+											"    var tablebody = table.append(\"tbody\");",
+											"    rows = tablebody",
+											"      .selectAll(\"tr\")",
+											"        .data(results)",
+											"        .enter()",
+											"      .append(\"tr\");",
+											"      ",
+											"    // each row has its own array, so here we enter it into the cells",
+											"    cells = rows.selectAll(\"td\")",
+											"        .data(function(d) {",
+											"            return d;",
+											"        })",
+											"        .enter()",
+											"      .append(\"td\")",
+											"        .text(function(d) {",
+											"            return d;",
+											"        })",
+											"      .filter(function(d) {return isEndpoint(d)})",
+											"        .attr('onclick', function(d) {",
+											"            return 'copy(\\\"' + d + '\\\")'",
+											"        })",
+											"        .attr('class', 'api');",
+											"        ",
+											"    function copy(text) {",
+											"        const el = document.createElement('textarea');",
+											"        el.value = text;",
+											"        el.style = {display: 'none'};",
+											"        document.body.append(el);",
+											"        el.select();",
+											"        document.execCommand('copy');",
+											"        document.body.removeChild(el);",
+											"    }",
+											"    ",
+											"    function isEndpoint(url) {",
+											"        const host = '{{host}}'",
+											"        return url.toString().indexOf(host) !== -1",
+											"    }",
+											"    ",
+											"</script>`;",
+											"",
+											"// Host checks for nested API endpoints and makes them copyable-on-click",
+											"const host = pm.request.url.host.join(\".\");",
+											"const response = pm.response.json();",
+											"",
+											"/* DATA PARSING */",
+											"function parseData(response, host) {",
+											"    // Row data passed in as array of arrays (ex. [[name1, api1], [name2, api2], ...])",
+											"    const results = response.Databases.map(obj => Object.values(obj));",
+											"",
+											"    // Table Headers passed in as array of strings (ex. [\"Name\", \"Link\", ...])",
+											"    const headers = Array.from(",
+											"      response.Databases.reduce((keys, cur) => {",
+											"        for (const key of Object.keys(cur)) {",
+											"          keys.add(key);",
+											"        }",
+											"        return keys;",
+											"      }, new Set())",
+											"    );",
+											"    return [results, headers]",
+											"}",
+											"",
+											"/* FEED DATA INTO TEMPLATE */",
+											"pm.visualizer.set(template, {",
+											"  // Template will receive stringified JSON",
+											"  results: JSON.stringify(parseData(response)[0]),",
+											"  headers: JSON.stringify(parseData(response)[1]),",
+											"  host",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Database",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Database",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Collections",
+					"item": [
+						{
+							"name": "Create Collection",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n  \"id\": \"testcollection\",  \n  \"indexingPolicy\": {  \n    \"automatic\": true,  \n    \"indexingMode\": \"Consistent\",  \n    \"includedPaths\": [  \n      {  \n        \"path\": \"/*\",  \n        \"indexes\": [  \n          {  \n            \"dataType\": \"String\",  \n            \"precision\": -1,  \n            \"kind\": \"Range\"  \n          }  \n        ]  \n      }  \n    ]  \n  },  \n  \"partitionKey\": {  \n    \"paths\": [  \n      \"/id\"  \n    ],  \n    \"kind\": \"Hash\",\n     \"Version\": 2\n\n  }  \n}  ",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/colls",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"colls"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Collections",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/colls",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"colls"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Collection",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/colls/{{collectionName}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"colls",
+										"{{collectionName}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Collection",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/colls/{{collectionName}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"colls",
+										"{{collectionName}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Partion Key Ranges",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/colls/{{collectionName}}/pkranges",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"colls",
+										"{{collectionName}}",
+										"pkranges"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Documents",
+					"item": [
+						{
+							"name": "List Documents",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var template = `",
+											"<script src=\"https://d3js.org/d3.v5.min.js\"></script>",
+											"<div id=\"table\"></div>",
+											"<style>",
+											"    thead {",
+											"      background-color: #F5F5F5;",
+											"      border",
+											"    } ",
+											"    th, th:first-child, th:last-child, td, td:first-child, td:last-child {",
+											"        padding: 12px 15px;",
+											"    }",
+											"    th {",
+											"        text-transform: uppercase;",
+											"    }",
+											"    td {",
+											"        color: #676769;",
+											"    }",
+											"    tbody tr:nth-child(odd) {",
+											"        background-color: white;",
+											"        transition: 0.3s;",
+											"    }",
+											"    tbody tr:nth-child(even) {",
+											"        background-color: #F5F5F5;",
+											"        transition: 0.3s;",
+											"    }",
+											"    tbody tr:hover {",
+											"        filter: brightness(90%);",
+											"    }",
+											"    .api {",
+											"        cursor: pointer;",
+											"    }",
+											"    .api:active {",
+											"        color: #202128;",
+											"    }",
+											"</style>",
+											"<script>",
+											"    const results = {{{results}}};",
+											"    const headers = {{{headers}}};",
+											"    var table = d3.select(\"#table\").append(\"table\");",
+											"    var header = table.append(\"thead\").append(\"tr\");",
+											"    ",
+											"    // creates the headers",
+											"    header",
+											"      .selectAll(\"th\")",
+											"        .data(headers)",
+											"        .enter()",
+											"      .append(\"th\")",
+											"        .text(function(d) {return d;});",
+											"    var tablebody = table.append(\"tbody\");",
+											"    rows = tablebody",
+											"      .selectAll(\"tr\")",
+											"        .data(results)",
+											"        .enter()",
+											"      .append(\"tr\");",
+											"      ",
+											"    // each row has its own array, so here we enter it into the cells",
+											"    cells = rows.selectAll(\"td\")",
+											"        .data(function(d) {",
+											"            return d;",
+											"        })",
+											"        .enter()",
+											"      .append(\"td\")",
+											"        .text(function(d) {",
+											"            return d;",
+											"        })",
+											"      .filter(function(d) {return isEndpoint(d)})",
+											"        .attr('onclick', function(d) {",
+											"            return 'copy(\\\"' + d + '\\\")'",
+											"        })",
+											"        .attr('class', 'api');",
+											"        ",
+											"    function copy(text) {",
+											"        const el = document.createElement('textarea');",
+											"        el.value = text;",
+											"        el.style = {display: 'none'};",
+											"        document.body.append(el);",
+											"        el.select();",
+											"        document.execCommand('copy');",
+											"        document.body.removeChild(el);",
+											"    }",
+											"    ",
+											"    function isEndpoint(url) {",
+											"        const host = '{{host}}'",
+											"        return url.toString().indexOf(host) !== -1",
+											"    }",
+											"    ",
+											"</script>`;",
+											"",
+											"// Host checks for nested API endpoints and makes them copyable-on-click",
+											"const host = pm.request.url.host.join(\".\");",
+											"const response = pm.response.json();",
+											"",
+											"/* DATA PARSING */",
+											"function parseData(response, host) {",
+											"    // Row data passed in as array of arrays (ex. [[name1, api1], [name2, api2], ...])",
+											"    const results = response.Documents.map(obj => Object.values(obj));",
+											"",
+											"    // Table Headers passed in as array of strings (ex. [\"Name\", \"Link\", ...])",
+											"    const headers = Array.from(",
+											"      response.Documents.reduce((keys, cur) => {",
+											"        for (const key of Object.keys(cur)) {",
+											"          keys.add(key);",
+											"        }",
+											"        return keys;",
+											"      }, new Set())",
+											"    );",
+											"    return [results, headers]",
+											"}",
+											"",
+											"/* FEED DATA INTO TEMPLATE */",
+											"pm.visualizer.set(template, {",
+											"  // Template will receive stringified JSON",
+											"  results: JSON.stringify(parseData(response)[0]),",
+											"  headers: JSON.stringify(parseData(response)[1]),",
+											"  host",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "{{apiVersion}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/colls/{{collectionName}}/docs",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"colls",
+										"{{collectionName}}",
+										"docs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Document",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/query+json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "{{apiVersion}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/query+json",
+										"type": "text"
+									},
+									{
+										"key": "x-ms-documentdb-query-enablecrosspartition",
+										"value": "True",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "x-ms-documentdb-partitionkey",
+										"value": "[\"{{partitionId}}\"]",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/colls/{{collectionName}}/docs/{{docId}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"colls",
+										"{{collectionName}}",
+										"docs",
+										"{{docId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Query Documents",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var template = `",
+											"<script src=\"https://d3js.org/d3.v5.min.js\"></script>",
+											"<div id=\"table\"></div>",
+											"<style>",
+											"    thead {",
+											"      background-color: #F5F5F5;",
+											"      border",
+											"    } ",
+											"    th, th:first-child, th:last-child, td, td:first-child, td:last-child {",
+											"        padding: 12px 15px;",
+											"    }",
+											"    th {",
+											"        text-transform: uppercase;",
+											"    }",
+											"    td {",
+											"        color: #676769;",
+											"    }",
+											"    tbody tr:nth-child(odd) {",
+											"        background-color: white;",
+											"        transition: 0.3s;",
+											"    }",
+											"    tbody tr:nth-child(even) {",
+											"        background-color: #F5F5F5;",
+											"        transition: 0.3s;",
+											"    }",
+											"    tbody tr:hover {",
+											"        filter: brightness(90%);",
+											"    }",
+											"    .api {",
+											"        cursor: pointer;",
+											"    }",
+											"    .api:active {",
+											"        color: #202128;",
+											"    }",
+											"</style>",
+											"<script>",
+											"    const results = {{{results}}};",
+											"    const headers = {{{headers}}};",
+											"    var table = d3.select(\"#table\").append(\"table\");",
+											"    var header = table.append(\"thead\").append(\"tr\");",
+											"    ",
+											"    // creates the headers",
+											"    header",
+											"      .selectAll(\"th\")",
+											"        .data(headers)",
+											"        .enter()",
+											"      .append(\"th\")",
+											"        .text(function(d) {return d;});",
+											"    var tablebody = table.append(\"tbody\");",
+											"    rows = tablebody",
+											"      .selectAll(\"tr\")",
+											"        .data(results)",
+											"        .enter()",
+											"      .append(\"tr\");",
+											"      ",
+											"    // each row has its own array, so here we enter it into the cells",
+											"    cells = rows.selectAll(\"td\")",
+											"        .data(function(d) {",
+											"            return d;",
+											"        })",
+											"        .enter()",
+											"      .append(\"td\")",
+											"        .text(function(d) {",
+											"            return d;",
+											"        })",
+											"      .filter(function(d) {return isEndpoint(d)})",
+											"        .attr('onclick', function(d) {",
+											"            return 'copy(\\\"' + d + '\\\")'",
+											"        })",
+											"        .attr('class', 'api');",
+											"        ",
+											"    function copy(text) {",
+											"        const el = document.createElement('textarea');",
+											"        el.value = text;",
+											"        el.style = {display: 'none'};",
+											"        document.body.append(el);",
+											"        el.select();",
+											"        document.execCommand('copy');",
+											"        document.body.removeChild(el);",
+											"    }",
+											"    ",
+											"    function isEndpoint(url) {",
+											"        const host = '{{host}}'",
+											"        return url.toString().indexOf(host) !== -1",
+											"    }",
+											"    ",
+											"</script>`;",
+											"",
+											"// Host checks for nested API endpoints and makes them copyable-on-click",
+											"const host = pm.request.url.host.join(\".\");",
+											"const response = pm.response.json();",
+											"",
+											"/* DATA PARSING */",
+											"function parseData(response, host) {",
+											"    // Row data passed in as array of arrays (ex. [[name1, api1], [name2, api2], ...])",
+											"    const results = response.Databases.map(obj => Object.values(obj));",
+											"",
+											"    // Table Headers passed in as array of strings (ex. [\"Name\", \"Link\", ...])",
+											"    const headers = Array.from(",
+											"      response.Databases.reduce((keys, cur) => {",
+											"        for (const key of Object.keys(cur)) {",
+											"          keys.add(key);",
+											"        }",
+											"        return keys;",
+											"      }, new Set())",
+											"    );",
+											"    return [results, headers]",
+											"}",
+											"",
+											"/* FEED DATA INTO TEMPLATE */",
+											"pm.visualizer.set(template, {",
+											"  // Template will receive stringified JSON",
+											"  results: JSON.stringify(parseData(response)[0]),",
+											"  headers: JSON.stringify(parseData(response)[1]),",
+											"  host",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									},
+									{
+										"key": "x-ms-documentdb-isquery",
+										"value": "true"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/query+json",
+										"type": "text"
+									},
+									{
+										"key": "x-ms-documentdb-query-enablecrosspartition",
+										"value": "true",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"query\": \"SELECT * FROM Items c WHERE c.id = @subId\",\r\n    \"parameters\": [\r\n        {\r\n            \"name\": \"@subId\",\r\n            \"value\": \"70f4704f-529b-49c8-944c-ebe642a9f3f3\"\r\n        }\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/colls/{{collectionName}}/docs",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"colls",
+										"{{collectionName}}",
+										"docs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Document",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"12f4704f-529b-49c8-944c-ebe642a9f3f4\",\n    \"name\": \"test\",\n    \"role\": \"user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/colls/{{collectionName}}/docs",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"colls",
+										"{{collectionName}}",
+										"docs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Replace Document",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"70f4704f-529b-49c8-944c-ebe642a9f3f3\",\n    \"name\": \"testingNew\",\n    \"role\": \"user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/colls/{{collectionName}}/docs/{{docId}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"colls",
+										"{{collectionName}}",
+										"docs",
+										"{{docId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Document",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/colls/{{collectionName}}/docs/{{docId}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"colls",
+										"{{collectionName}}",
+										"docs",
+										"{{docId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "Create User",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n    \"id\": \"a_user\"  \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Users",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/users",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/users/{{userName}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"users",
+										"{{userName}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Replace User",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/users/{{userName}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"users",
+										"{{userName}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/users/{{userName}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"users",
+										"{{userName}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Permissions",
+					"item": [
+						{
+							"name": "Create Permission",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n    \"id\": \"a_permission\",  \n    \"permissionMode\": \"Read\",  \n    \"resource\": \"dbs/volcanodb/colls/volcano1\"  \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/users/{{userName}}/permissions",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"users",
+										"{{userName}}",
+										"permissions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Permissions",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/users/{{userName}}/permissions",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"users",
+										"{{userName}}",
+										"permissions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Permission",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/users/{{userName}}/permissions/{{permissionName}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"users",
+										"{{userName}}",
+										"permissions",
+										"{{permissionName}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Replace Permission",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n    \"id\": \"a_permission\",  \n    \"permissionMode\": \"Read\",  \n    \"resource\": \"dbs/volcanodb/colls/volcano1\"  \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/users/{{userName}}/permissions/{{permissionName}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"users",
+										"{{userName}}",
+										"permissions",
+										"{{permissionName}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Permission",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "2016-07-11"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									}
+								],
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/users/{{userName}}/permissions/{{permissionName}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"users",
+										"{{userName}}",
+										"permissions",
+										"{{permissionName}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Delete Document Run",
+					"item": [
+						{
+							"name": "Get Document Copy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/query+json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "{{apiVersion}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/query+json",
+										"type": "text"
+									},
+									{
+										"key": "x-ms-documentdb-query-enablecrosspartition",
+										"value": "True",
+										"type": "text"
+									},
+									{
+										"key": "x-ms-documentdb-partitionkey",
+										"value": "[\"{{docId}}\"]",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/TaskManager/colls/Task/docs/{{docId}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"TaskManager",
+										"colls",
+										"Task",
+										"docs",
+										"{{docId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Document",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "x-ms-version",
+										"value": "{{apiVersion}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{authToken}}"
+									},
+									{
+										"key": "x-ms-date",
+										"value": "{{RFC1123time}}"
+									},
+									{
+										"key": "x-ms-documentdb-partitionkey",
+										"value": "[\"{{docId}}\"]",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{cosmosHost}}/dbs/{{dbName}}/colls/{{collectionName}}/docs/{{docId}}",
+									"protocol": "https",
+									"host": [
+										"{{cosmosHost}}"
+									],
+									"path": [
+										"dbs",
+										"{{dbName}}",
+										"colls",
+										"{{collectionName}}",
+										"docs",
+										"{{docId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "To use these APIs you will need to update the following 'Azure REST API' environment variables:\n\ncosmosHost: e.g. dbName.documents.azure.com:443\ncosmosMasterKey: (This can be found in Cosmos under Settings > Keys > Primary Key)\n\nYou will also need the following variables to populate the URL path params:\n\n- dbName\n- collectionName\n- docId\n- userName\n- permissionName",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// store our master key for documentdb",
+							"var mastKey = pm.environment.get(\"cosmosMasterKey\");",
+							"// console.log(\"mastKey = \" + mastKey);",
+							"// store our date as RFC1123 format for the request",
+							"var today = new Date();",
+							"var UTCstring = today.toUTCString();",
+							"pm.environment.set(\"RFC1123time\", UTCstring);",
+							"// Grab the request url",
+							"var url = request.url.trim(); ",
+							"// console.log(\"request url = \" + url);",
+							"// strip the url of the hostname up and leading slash",
+							"var strippedurl = url.replace(new RegExp('^https?://[^/]+/'),'/');",
+							"// console.log (\"stripped Url = \" + strippedurl);",
+							"// push the parts down into an array so we can determine if the call is on a specific item",
+							"// or if it is on a resource (odd would mean a resource, even would mean an item)",
+							"var strippedparts = strippedurl.split(\"/\");",
+							"var truestrippedcount = (strippedparts.length - 1);",
+							"// console.log(truestrippedcount);",
+							"// define resourceId/Type now so we can assign based on the amount of levels",
+							"var resourceId = \"\";",
+							"var resType = \"\";",
+							"// its odd (resource request)",
+							"if (truestrippedcount % 2)",
+							"{",
+							"    console.log(\"odd\");",
+							"    // assign resource type to the last part we found.",
+							"    resType = strippedparts[truestrippedcount];",
+							"    console.log(resType);",
+							"    ",
+							"    if (truestrippedcount > 1)",
+							"    {",
+							"        // now pull out the resource id by searching for the last slash and substringing to it.",
+							"        var lastPart = strippedurl.lastIndexOf(\"/\");",
+							"        resourceId = strippedurl.substring(1,lastPart);",
+							"        resourceId = \"dbs/\" + pm.environment.get(\"dbName\") + \"/colls/\" + pm.environment.get(\"collectionName\");",
+							"        console.log(resourceId);",
+							"    }",
+							"}",
+							"else // its even (item request on resource)",
+							"{",
+							"    console.log(\"even\");",
+							"    // assign resource type to the part before the last we found (last is resource id)",
+							"    resType = strippedparts[truestrippedcount - 1];",
+							"    console.log(resType);",
+							"    // finally remove the leading slash which we used to find the resource if it was",
+							"    // only one level deep.",
+							"    strippedurl = strippedurl.substring(1);",
+							"     console.log(strippedurl);",
+							"    // assign our resourceId",
+							"    resourceId = strippedurl;",
+							"    console.log(resourceId);",
+							"    strippedurl = \"dbs/\" + pm.environment.get(\"dbName\") + \"/colls/\" + pm.environment.get(\"collectionName\") + \"/docs/\" +pm.variables.get(\"docId\");",
+							"    resourceId = \"dbs/\" + pm.environment.get(\"dbName\") + \"/colls/\" + pm.environment.get(\"collectionName\") + \"/docs/\" +pm.variables.get(\"docId\");",
+							"    //     console.log(strippedurl);",
+							"    //    console.log(resourceId);",
+							"}",
+							"",
+							"",
+							"// assign our verb",
+							"var verb = request.method.toLowerCase();",
+							"// assign our RFC 1123 date",
+							"var date = UTCstring.toLowerCase();",
+							"// parse our master key out as base64 encoding",
+							"var key = CryptoJS.enc.Base64.parse(mastKey);",
+							"console.log(\"key = \" + key);",
+							"// build up the request text for the signature so can sign it along with the key",
+							"var text = (verb || \"\").toLowerCase() + \"\\n\" + ",
+							"               (resType || \"\").toLowerCase() + \"\\n\" + ",
+							"               (resourceId || \"\") + \"\\n\" + ",
+							"               (date || \"\").toLowerCase() + \"\\n\" + ",
+							"               \"\" + \"\\n\";",
+							"console.log(\"text = \" + text);",
+							"// create the signature from build up request text",
+							"var signature = CryptoJS.HmacSHA256(text, key);",
+							"console.log(\"sig = \" + signature);",
+							"// back to base 64 bits",
+							"var base64Bits = CryptoJS.enc.Base64.stringify(signature);",
+							"// console.log(\"base64bits = \" + base64Bits);",
+							"// format our authentication token and URI encode it.",
+							"var MasterToken = \"master\";",
+							"var TokenVersion = \"1.0\";",
+							"auth = encodeURIComponent(\"type=\" + MasterToken + \"&ver=\" + TokenVersion + \"&sig=\" + base64Bits);",
+							"// console.log(\"auth = \" + auth);",
+							"// set our auth token enviornmental variable.",
+							"pm.environment.set(\"authToken\", auth);"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"const moment = require('moment');",
+					"",
+					"const currentEpoch = moment().unix();",
+					"const tokenExpiryEpoch = pm.environment.get('token_expiry');",
+					"",
+					"if(tokenExpiryEpoch > currentEpoch){",
+					"    console.log('Token is valid.')",
+					"}",
+					"else {",
+					"    console.log('Token Expired. Getting new token.');",
+					"    getAADToken();",
+					"}",
+					"",
+					"function getAADToken(){",
+					"    const tenantId = pm.environment.get('tenantId');",
+					"    const azTokenRequest = {",
+					"        url: `https://login.microsoftonline.com/${tenantId}/oauth2/token`,",
+					"        method: \"POST\",",
+					"        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+					"        body: {",
+					"            mode: 'urlencoded',",
+					"            urlencoded: [",
+					"                { key: \"grant_type\", value: \"client_credentials\", disabled: false },",
+					"                { key: \"client_id\", value: pm.environment.get(\"clientId\"), disabled: false },",
+					"                { key: \"client_secret\", value: pm.environment.get(\"clientSecret\"), disabled: false },",
+					"                { key: \"resource\", value: \"https://management.azure.com/\", disabled: false }",
+					"            ]",
+					"        }",
+					"    };",
+					"",
+					"    pm.sendRequest(azTokenRequest, function (err, res) {",
+					"        if (err) {",
+					"            console.log(err);",
+					"            throw new Error(err);",
+					"        }",
+					"        else{",
+					"            console.log(res.json());",
+					"            var accessToken = res.json().access_token;",
+					"            pm.environment.set(\"access_token\", accessToken);",
+					"            pm.environment.set(\"token_expiry\", res.json().expires_on)",
+					"        }",
+					"    });",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "kafkatoken",
+			"value": ""
+		},
+		{
+			"key": "partitionId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "docId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userName",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "permissionName",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
